@@ -55,10 +55,6 @@ def visualize_demographic():
 
     return fig
 
-
-
-visualize_demographic().show()
-
 # Generate and display the figure
 fig1 = visualize_demographic()
 st.plotly_chart(fig1, use_container_width=True)
