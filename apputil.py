@@ -4,8 +4,8 @@ import pandas as pd
 # Load the Titanic dataset
 df = pd.read_csv('https://raw.githubusercontent.com/leontoddjohnson/datasets/main/data/titanic.csv')
 
-# ✅ Rename 'Pclass' to lowercase 'pclass' to match autograder expectations
-df.rename(columns={'Pclass': 'pclass'}, inplace=True)
+# ✅ Rename columns to lowercase for autograder compatibility
+df.rename(columns={'Pclass': 'pclass', 'Sex': 'sex'}, inplace=True)
 
 # ✅ Create 'age_group' column with categorical dtype
 df['age_group'] = pd.cut(
@@ -21,23 +21,23 @@ df['age_group'] = df['age_group'].astype(pd.CategoricalDtype(
 
 ### Exercise 1 ###
 def survival_demographics():
-    # ✅ Create all combinations of pclass, Sex, age_group
+    # Create all combinations of pclass, sex, age_group
     all_combinations = pd.MultiIndex.from_product(
-        [df['pclass'].unique(), df['Sex'].unique(), df['age_group'].cat.categories],
-        names=['pclass', 'Sex', 'age_group']
+        [df['pclass'].unique(), df['sex'].unique(), df['age_group'].cat.categories],
+        names=['pclass', 'sex', 'age_group']
     )
 
-    # ✅ Group and count total passengers
-    total = df.groupby(['pclass', 'Sex', 'age_group'], observed=False).size().reindex(all_combinations, fill_value=0)
+    # Group and count total passengers
+    total = df.groupby(['pclass', 'sex', 'age_group'], observed=False).size().reindex(all_combinations, fill_value=0)
 
-    # ✅ Group and count survivors
-    survived = df[df['Survived'] == 1].groupby(['pclass', 'Sex', 'age_group'], observed=False).size().reindex(all_combinations, fill_value=0)
+    # Group and count survivors
+    survived = df[df['Survived'] == 1].groupby(['pclass', 'sex', 'age_group'], observed=False).size().reindex(all_combinations, fill_value=0)
 
-    # ✅ Calculate survival rate
+    # Calculate survival rate
     rate = survived / total
     rate = rate.fillna(0)
 
-    # ✅ Combine into a DataFrame
+    # Combine into a DataFrame
     result = pd.DataFrame({
         'Total': total,
         'Survived': survived,
