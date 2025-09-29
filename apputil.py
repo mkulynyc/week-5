@@ -4,35 +4,39 @@ import pandas as pd
 df = pd.read_csv('https://raw.githubusercontent.com/leontoddjohnson/datasets/main/data/titanic.csv')
 
 ### Exercise 1 ###
-def survival_demographics():
-    """
-    This function takes the Titanic DF and groups by class, sex, and age group.
-    It then calculates the total passengers, survived, and survival rate for each group combination.
+def survival_demographics2():
+    df['age_group'] = pd.cut(
+        df['Age'],
+        bins=[0, 12, 19, 59, 100],
+        labels=['Child', 'Teenager', 'Adult', 'Senior']
+    ).astype('category')  # Ensure categorical dtype
 
-    Arguments:
-        None
+    # Create all combinations of Pclass, Sex, age_group
+    all_combinations = pd.MultiIndex.from_product(
+        [df['Pclass'].unique(), df['Sex'].unique(), df['age_group'].cat.categories],
+        names=['Pclass', 'Sex', 'age_group']
+    )
 
-    Returns:
-        pandas DataFrame with total passengers, survived, and survival rate for each group combination.
-    """
-    # 1. Create a new column called 'age_group' based on the 'age' column
-    df['age_group'] = pd.cut(df['Age'], bins=[0, 12, 19, 59, 100], labels=['Child', 'Teenager', 'Adult', 'Senior']) 
+    # Group and count total passengers
+    total = df.groupby(['Pclass', 'Sex', 'age_group'], observed=False).size().reindex(all_combinations, fill_value=0)
 
-    # 2. Group by Pclass, Sex, age_group
-    grouped = df.groupby(['Pclass', 'Sex', 'age_group'], observed=False).size().unstack(fill_value=0)
+    # Group and count survivors
+    survived = df[df['Survived'] == 1].groupby(['Pclass', 'Sex', 'age_group'], observed=False).size().reindex(all_combinations, fill_value=0)
 
-    # 3. Calculate total passengers, survived, and survival rate for each group
-    total_passengers = df.groupby(['Pclass', 'Sex', 'age_group'], observed=False).size().unstack(fill_value=0)
-    survived = df[df['Survived'] == 1].groupby(['Pclass', 'Sex', 'age_group'], observed=False).size().unstack(fill_value=0)
-    survival_rate = survived / total_passengers
+    # Calculate survival rate
+    rate = survived / total
+    rate = rate.fillna(0)
 
-    # 4. Create DF with total, survived, and survival rate for each group
-    groups_df = pd.concat([total_passengers, survived, survival_rate], axis=1, keys=['Total', 'Survived', 'Survival Rate'])
+    # Combine into a DataFrame
+    result = pd.DataFrame({
+        'Total': total,
+        'Survived': survived,
+        'Survival Rate': rate
+    }).reset_index()
 
-    # 5. Order the Data
-    groups_df = groups_df.sort_index()
-    
-    # 6. Return the DataFrame
-    return groups_df
+    return result
+
+survival_demographics2()
+
 
 
