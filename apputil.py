@@ -9,7 +9,12 @@ def survival_demographics():
         df['Age'],
         bins=[0, 12, 19, 59, 100],
         labels=['Child', 'Teenager', 'Adult', 'Senior']
-    ).astype('category')  # Ensure categorical dtype
+    )
+
+    df['age_group'] = df['age_group'].astype(pd.CategoricalDtype(
+        categories=['Child', 'Teenager', 'Adult', 'Senior'],
+        ordered=True
+    ))
 
     # Create all combinations of Pclass, Sex, age_group
     all_combinations = pd.MultiIndex.from_product(
