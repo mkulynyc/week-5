@@ -52,3 +52,4 @@ def survival_demographics():
     }).reset_index()
 
     return result
+
