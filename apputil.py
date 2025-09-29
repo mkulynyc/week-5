@@ -4,7 +4,7 @@ import pandas as pd
 df = pd.read_csv('https://raw.githubusercontent.com/leontoddjohnson/datasets/main/data/titanic.csv')
 
 ### Exercise 1 ###
-def survival_demographics2():
+def survival_demographics():
     df['age_group'] = pd.cut(
         df['Age'],
         bins=[0, 12, 19, 59, 100],
