@@ -39,9 +39,7 @@ def survival_demographics():
         'Survival Rate': rate
     }).reset_index()
 
-    df = result
-
-    return df
+    return result
 
 
 
