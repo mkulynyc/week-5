@@ -36,7 +36,7 @@ def survival_demographics():
 
     return result
 
-survival_demographics2()
+
 
 
 
