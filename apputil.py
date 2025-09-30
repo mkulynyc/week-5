@@ -53,3 +53,49 @@ def survival_demographics():
 
     return result
 
+
+### Exercise 2 ###
+def family_groups():
+    """
+    This function creates a family size column, groups by family size and class,
+    and calculates total passengers, average fare, min fare, and max fare for each group.
+
+    Arguments:
+        None
+
+    Returns:
+        pandas DataFrame: A DataFrame containing family size statistics.
+    """
+    # Create family size column by # of siblings/spouses + # of parents/children + 1 (self)
+    df['family_size'] = df['SibSp'] + df['Parch'] + 1  
+
+    # Group by family size, pclass, calculate number of passengers, avg fare, min/max fare
+    family_stats = df.groupby(['family_size', 'pclass'], observed=False).agg(
+        total_passengers=('PassengerId', 'count'),
+        avg_fare=('Fare', 'mean'),
+        min_fare=('Fare', 'min'),
+        max_fare=('Fare', 'max')
+    ).reset_index()
+
+    # Return sorted table by class then family size
+    return family_stats.sort_values(by=['pclass', 'family_size'])
+
+def last_names():
+    """
+    This function extracts last names from the 'Name' column and counts occurrences.
+
+    Arguments:
+        None
+
+    Returns:
+        pandas DataFrame: A DataFrame with last names and their counts.
+    """
+    # Extract last names from the 'Name' column
+    df['last_name'] = df['Name'].str.split(',').str[0]
+
+    # Count occurrences of each last name
+    last_name_counts = df['last_name'].value_counts().reset_index()
+    last_name_counts.columns = ['last_name', 'count']
+
+    return last_name_counts
+
