@@ -2,6 +2,7 @@ import streamlit as st
 
 from apputil import *
 
+
 # Load Titanic dataset
 df = pd.read_csv('https://raw.githubusercontent.com/leontoddjohnson/datasets/main/data/titanic.csv')
 
@@ -62,12 +63,43 @@ st.plotly_chart(fig1, use_container_width=True)
 st.write(
 '''
 # Titanic Visualization 2
+
+There seems to be a discrepancy between the last name counts and family size.
+For instance, the largest family size is 11, but the largest last name count is 9 (Andersson).
+There are other examples of this as well.
+
+Question:
+What is the distribution of family sizes on the Titanic, and how does that relate to fare prices?
 '''
 )
-# Generate and display the figure
+# Generate the plot
+def visualize_families():
+    family_stats = family_groups()
+
+    # ✅ Convert pclass to string so Plotly treats it as categorical
+    family_stats['pclass'] = family_stats['pclass'].astype(str)
+
+    fig = px.bar(
+        family_stats,
+        x='family_size',
+        y='avg_fare',
+        color='pclass',
+        barmode='group',  # ensures side-by-side bars
+        title='Average Fare by Family Size and Class',
+        labels={
+            'family_size': 'Family Size',
+            'avg_fare': 'Average Fare',
+            'pclass': 'Passenger Class'
+        }
+    )
+
+    return fig
+
+# Display the figure
 fig2 = visualize_families()
 st.plotly_chart(fig2, use_container_width=True)
 
+'''
 st.write(
 '''
 # Titanic Visualization Bonus
@@ -76,3 +108,4 @@ st.write(
 # Generate and display the figure
 fig3 = visualize_family_size()
 st.plotly_chart(fig3, use_container_width=True)
+'''
