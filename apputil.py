@@ -88,14 +88,11 @@ def last_names():
         None
 
     Returns:
-        pandas DataFrame: A DataFrame with last names and their counts.
+        pandas Series: A Series with last names and their counts.
     """
     # Extract last names from the 'Name' column
     df['last_name'] = df['Name'].str.split(',').str[0]
 
-    # Count occurrences of each last name
-    last_name_counts = df['last_name'].value_counts().reset_index()
-    last_name_counts.columns = ['last_name', 'count']
-
-    return last_name_counts
+    # Return as a Series
+    return df['last_name'].value_counts()
 
